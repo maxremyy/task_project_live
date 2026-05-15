@@ -85,28 +85,52 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>ToDo Liste</h1>
-      <div>
-        <input
-          type="text"
-          placeholder="Neue Aufgabe hinzufügen"
-          value={newTodo}
-          onChange={(e) => setNewTodo(e.target.value)}
-        ></input>
-        <button onClick={addTodo}>ToDo Item hinzufügen</button>
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
+      <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        <h1 className="text-3xl font-bold text-white mb-6 text-center">ToDo Liste</h1>
+        <div className="flex gap-2 mb-6">
+          <input
+            type="text"
+            placeholder="Neue Aufgabe hinzufügen..."
+            value={newTodo}
+            onChange={(e) => setNewTodo(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addTodo()}
+            className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+          />
+          <button
+            onClick={addTodo}
+            className="bg-purple-500 hover:bg-purple-600 text-white rounded-xl px-5 py-2 transition-colors font-bold text-xl"
+          >
+            +
+          </button>
+        </div>
+        <ul className="space-y-2">
+          {todos.map((item) => (
+            <li
+              key={item.id}
+              className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 transition-all"
+            >
+              <span
+                className={`flex-1 ${item.isCompleted ? "text-white/40 line-through" : "text-white"}`}
+              >
+                {item.toDoName}
+              </span>
+              <button
+                onClick={() => completeToDo(item.id, item.isCompleted)}
+                className="text-green-400 hover:text-green-300 transition-colors text-lg bg-transparent border-none p-1 cursor-pointer"
+              >
+                {item.isCompleted ? "↩" : "✓"}
+              </button>
+              <button
+                onClick={() => deleteToDo(item.id)}
+                className="text-red-400 hover:text-red-300 transition-colors text-lg bg-transparent border-none p-1 cursor-pointer"
+              >
+                ✕
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
-      <ul>
-        {todos.map((item) => (
-          <li style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <span style={{ flex: 1 }}>{item.toDoName}</span>
-            <button onClick={() => completeToDo(item.id, item.isCompleted)}>
-              {item.isCompleted ? "Undo" : "Complete"}
-            </button>
-            <button onClick={() => deleteToDo(item.id)}>Delete ToDo</button>
-          </li>
-        ))}
-      </ul>
     </div>
   );
 }
