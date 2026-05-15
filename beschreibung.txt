@@ -1,0 +1,73 @@
+===================================
+ ToDo App mit React und Supabase
+===================================
+
+Was macht der Code?
+-------------------
+Diese App ist eine einfache ToDo-Liste, die mit React (Frontend) und Supabase (Backend/Datenbank) gebaut ist.
+Der Benutzer kann Aufgaben erstellen, als erledigt markieren und loeschen.
+Alle Daten werden in einer Supabase-Datenbank gespeichert, sodass sie auch nach einem Neuladen der Seite erhalten bleiben.
+
+Die App verwendet alle vier CRUD-Operationen:
+- CREATE: Neue Todos werden mit insert() in die Datenbank eingefuegt
+- READ:   Beim Laden der Seite werden alle Todos mit select() aus der Datenbank geholt
+- UPDATE: Der isCompleted-Status wird mit update() geaendert
+- DELETE: Todos werden mit delete() aus der Datenbank entfernt
+
+
+Was ist Supabase?
+-----------------
+Supabase ist eine Open-Source-Alternative zu Firebase. Es stellt eine PostgreSQL-Datenbank bereit,
+die man ueber eine einfache JavaScript-API ansprechen kann, ohne selbst einen Backend-Server zu schreiben.
+
+Man erstellt ein Projekt auf supabase.com, legt dort Tabellen an (in unserem Fall "ToDoList")
+und kann dann direkt aus dem Frontend Daten lesen und schreiben.
+
+
+Installation
+------------
+Bevor wir Supabase nutzen konnten, mussten wir das Supabase Client-Paket installieren:
+
+    npm install @supabase/supabase-js
+
+Danach haben wir in supabase-client.js den Client mit der Projekt-URL und dem API-Key konfiguriert.
+
+
+API Key und Sicherheit
+-----------------------
+Um mit Supabase zu kommunizieren, braucht man zwei Dinge:
+1. Die Projekt-URL (z.B. https://xxxxx.supabase.co)
+2. Den anon/public API-Key
+
+Der API-Key authentifiziert die Anfragen an die Supabase-API.
+In diesem Projekt werden diese Werte in einer .env Datei gespeichert:
+
+    VITE_SUPABASE_URL=https://xxxxx.supabase.co
+    VITE_SUPABASE_KEY=sb_publishable_...
+
+Im Code (supabase-client.js) werden sie so eingebunden:
+
+    import.meta.env.VITE_SUPABASE_URL
+    import.meta.env.VITE_SUPABASE_KEY
+
+Die .env Datei ist in .gitignore eingetragen und wird dadurch NICHT in das
+Git-Repository gepusht. So bleibt der API-Key geheim und landet nicht auf GitHub.
+Wer das Projekt klont, muss eine eigene .env Datei mit seinen Supabase-Zugangsdaten erstellen.
+
+
+Row Level Security (RLS)
+-------------------------
+Supabase hat standardmaessig Row Level Security (RLS) aktiviert. Das bedeutet, dass niemand
+Daten lesen oder schreiben kann, bis man explizite Zugriffsregeln (Policies) definiert.
+
+Fuer dieses Lernprojekt haben wir RLS ausgeschaltet, damit die App ohne Policies funktioniert.
+In einer echten Produktions-App sollte man RLS aktiviert lassen und passende Policies erstellen,
+um sicherzustellen, dass Benutzer nur auf ihre eigenen Daten zugreifen koennen.
+
+
+Tipp: Aenderungen live verfolgen
+---------------------------------
+Man kann im Supabase Dashboard (supabase.com) die Tabelle "ToDoList" nebenbei offen haben
+(Table Editor -> ToDoList). Wenn man dann in der App ein Todo hinzufuegt, als erledigt markiert
+oder loescht, sieht man die Aenderungen in Echtzeit in der Tabelle.
+Das ist sehr hilfreich zum Debuggen und um zu verstehen, was die CRUD-Operationen in der Datenbank bewirken.
