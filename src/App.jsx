@@ -65,8 +65,13 @@ function App() {
     else setTodos(todos.filter((t) => t.id !== id));
   };
 
+  // redirectTo: window.location.origin sorgt dafuer, dass Supabase nach dem Login
+  // zurueck zur aktuellen Domain leitet (localhost in Entwicklung, Vercel in Produktion).
   const signInWithGoogle = () =>
-    supabase.auth.signInWithOAuth({ provider: "google" });
+    supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: window.location.origin },
+    });
 
   const signOut = () => supabase.auth.signOut();
 
