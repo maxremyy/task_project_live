@@ -20,7 +20,7 @@ Was ist Supabase?
 Supabase ist eine Open-Source-Alternative zu Firebase. Es stellt eine PostgreSQL-Datenbank bereit,
 die man ueber eine einfache JavaScript-API ansprechen kann, ohne selbst einen Backend-Server zu schreiben.
 
-Man erstellt ein Projekt auf supabase.com, legt dort Tabellen an (in unserem Fall "ToDoList")
+Man erstellt ein Projekt auf supabase.com, legt dort Tabellen an (in unserem Fall "Tasks")
 und kann dann direkt aus dem Frontend Daten lesen und schreiben.
 
 
@@ -57,17 +57,75 @@ Wer das Projekt klont, muss eine eigene .env Datei mit seinen Supabase-Zugangsda
 
 Row Level Security (RLS)
 -------------------------
-Supabase hat standardmaessig Row Level Security (RLS) aktiviert. Das bedeutet, dass niemand
-Daten lesen oder schreiben kann, bis man explizite Zugriffsregeln (Policies) definiert.
+RLS ist aktiviert. Das bedeutet, dass Supabase bei jeder Datenbankabfrage automatisch
+prueft, wem die Daten gehoeren — und nur die eigenen Daten zurueckgibt.
 
-Fuer dieses Lernprojekt haben wir RLS ausgeschaltet, damit die App ohne Policies funktioniert.
-In einer echten Produktions-App sollte man RLS aktiviert lassen und passende Policies erstellen,
-um sicherzustellen, dass Benutzer nur auf ihre eigenen Daten zugreifen koennen.
+Dafuer haben wir in der Tasks-Tabelle eine user_id-Spalte (UUID) hinzugefuegt.
+Beim Erstellen eines Todos wird die ID des eingeloggten Users mitgeschickt:
+
+    { toDoName: "...", isCompleted: false, user_id: session.user.id }
+
+Die RLS Policy lautet:
+
+    auth.uid() = user_id
+
+Das bedeutet: Ein User sieht, bearbeitet und loescht nur Zeilen, bei denen
+seine eigene ID in der user_id-Spalte steht. Andere User sehen diese Daten nicht.
+
+
+Google OAuth (Authentifizierung)
+----------------------------------
+Die App hat einen Login mit Google. Benutzer koennen sich nicht ohne Account anmelden —
+die ToDo-Liste ist erst nach dem Login sichtbar (Login-Wall).
+
+Technisch laeuft das ueber Supabase Auth + Google OAuth:
+1. Google Cloud Console: OAuth 2.0 Client ID erstellen, Callback-URL von Supabase eintragen
+2. Supabase Dashboard: Authentication -> Providers -> Google aktivieren, Client ID + Secret eintragen
+3. Im Code: supabase.auth.signInWithOAuth({ provider: "google" }) startet den Login-Flow
+
+Supabase verwaltet die Session automatisch. Mit onAuthStateChange() hoert die App
+auf Login- und Logout-Ereignisse und aktualisiert die Anzeige entsprechend.
+
+Nach dem Login wird der Name des Benutzers (aus den Google-Profildaten) angezeigt,
+zusammen mit einem Abmelden-Button.
+
+Im Supabase Dashboard unter Authentication -> Users sind alle registrierten Benutzer sichtbar.
+
+
+Neues Design
+-------------
+Das Design wurde von einem Purple-Gradient-Stil auf ein editoriales, minimalistisches
+Design umgestellt. Die Designrichtlinien sind in der CLAUDE.md Datei festgehalten.
+
+Wichtigste Aenderungen:
+- Hintergrundfarbe: #FAFAF8 (cremeweis) statt Purple-Gradient
+- Schriften: Instrument Serif (Ueberschriften) + Inter (Fliestext), geladen via Google Fonts
+- Farbpalette: Schwarz/Weiss mit Gold-Akzent (#B89B72) statt Lila/Blau
+- Aufgaben werden in zwei Sektionen aufgeteilt: "Offen" und "Erledigt"
+- Runder Check-Button mit Gold-Akzent statt Text-Icons
+
+Die Fonts werden in index.html via Google Fonts eingebunden.
+Die Farbwerte sind als CSS Custom Properties in index.css definiert (--color-bg, --color-accent, etc.)
+und koennen dort zentral geaendert werden.
+
+
+CLAUDE.md
+----------
+Im Projektverzeichnis liegt eine CLAUDE.md Datei. Diese richtet sich nicht an den
+Entwickler, sondern an Claude Code (claude.ai/code) — ein KI-Tool fuer Softwareentwicklung.
+
+Die Datei enthaelt:
+- Befehle zum Starten, Bauen und Linten der App
+- Den Tech-Stack und die Architektur auf hohem Niveau
+- Designrichtlinien (Farben, Schriften, Komponenten-Stil)
+
+So kann Claude Code bei kuenftigen Aufgaben direkt im richtigen Kontext arbeiten,
+ohne das Projekt von Grund auf neu analysieren zu muessen.
 
 
 Tipp: Aenderungen live verfolgen
 ---------------------------------
-Man kann im Supabase Dashboard (supabase.com) die Tabelle "ToDoList" nebenbei offen haben
-(Table Editor -> ToDoList). Wenn man dann in der App ein Todo hinzufuegt, als erledigt markiert
+Man kann im Supabase Dashboard (supabase.com) die Tabelle "Tasks" nebenbei offen haben
+(Table Editor -> Tasks). Wenn man dann in der App ein Todo hinzufuegt, als erledigt markiert
 oder loescht, sieht man die Aenderungen in Echtzeit in der Tabelle.
 Das ist sehr hilfreich zum Debuggen und um zu verstehen, was die CRUD-Operationen in der Datenbank bewirken.
