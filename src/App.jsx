@@ -84,53 +84,207 @@ function App() {
     }
   };
 
+  const open = todos.filter((t) => !t.isCompleted);
+  const done = todos.filter((t) => t.isCompleted);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center p-4">
-      <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-8 w-full max-w-md">
-        <h1 className="text-3xl font-bold text-white mb-6 text-center">ToDo Liste</h1>
-        <div className="flex gap-2 mb-6">
+    <div
+      className="min-h-screen flex flex-col items-center px-4 py-16"
+      style={{ backgroundColor: "var(--color-bg)" }}
+    >
+      {/* Header */}
+      <header className="w-full max-w-xl mb-12 text-center">
+        <p
+          className="text-xs font-medium tracking-widest uppercase mb-3"
+          style={{ color: "var(--color-accent)" }}
+        >
+          Aufgaben
+        </p>
+        <h1
+          className="font-serif text-5xl leading-tight"
+          style={{ color: "var(--color-primary)" }}
+        >
+          Was steht heute an?
+        </h1>
+      </header>
+
+      {/* Card */}
+      <div
+        className="w-full max-w-xl rounded-2xl p-8"
+        style={{
+          backgroundColor: "var(--color-surface)",
+          border: "1px solid var(--color-border)",
+        }}
+      >
+        {/* Input */}
+        <div className="flex gap-3 mb-8">
           <input
             type="text"
-            placeholder="Neue Aufgabe hinzufügen..."
+            placeholder="Neue Aufgabe …"
             value={newTodo}
             onChange={(e) => setNewTodo(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addTodo()}
-            className="flex-1 bg-white/10 border border-white/20 rounded-xl px-4 py-2 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-purple-400"
+            onKeyDown={(e) => e.key === "Enter" && newTodo.trim() && addTodo()}
+            className="flex-1 rounded-xl px-4 py-3 text-sm outline-none transition-all"
+            style={{
+              backgroundColor: "var(--color-bg)",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-primary)",
+              fontFamily: "Inter, sans-serif",
+            }}
+            onFocus={(e) =>
+              (e.target.style.borderColor = "var(--color-accent)")
+            }
+            onBlur={(e) => (e.target.style.borderColor = "var(--color-border)")}
           />
           <button
-            onClick={addTodo}
-            className="bg-purple-500 hover:bg-purple-600 text-white rounded-xl px-5 py-2 transition-colors font-bold text-xl"
+            onClick={() => newTodo.trim() && addTodo()}
+            className="rounded-xl px-5 py-3 text-sm font-medium transition-opacity hover:opacity-80 active:scale-95"
+            style={{
+              backgroundColor: "var(--color-primary)",
+              color: "#FFFFFF",
+              fontFamily: "Inter, sans-serif",
+            }}
           >
-            +
+            Hinzufügen
           </button>
         </div>
-        <ul className="space-y-2">
-          {todos.map((item) => (
-            <li
-              key={item.id}
-              className="bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl px-4 py-3 flex items-center gap-3 transition-all"
+
+        {/* Open tasks */}
+        {open.length > 0 && (
+          <section className="mb-6">
+            <p
+              className="text-xs font-medium tracking-widest uppercase mb-3"
+              style={{ color: "var(--color-text-secondary)" }}
             >
-              <span
-                className={`flex-1 ${item.isCompleted ? "text-white/40 line-through" : "text-white"}`}
-              >
-                {item.toDoName}
-              </span>
-              <button
-                onClick={() => completeToDo(item.id, item.isCompleted)}
-                className="text-green-400 hover:text-green-300 transition-colors text-lg bg-transparent border-none p-1 cursor-pointer"
-              >
-                {item.isCompleted ? "↩" : "✓"}
-              </button>
-              <button
-                onClick={() => deleteToDo(item.id)}
-                className="text-red-400 hover:text-red-300 transition-colors text-lg bg-transparent border-none p-1 cursor-pointer"
-              >
-                ✕
-              </button>
-            </li>
-          ))}
-        </ul>
+              Offen — {open.length}
+            </p>
+            <ul className="space-y-2">
+              {open.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors"
+                  style={{ border: "1px solid var(--color-border)" }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "var(--color-bg)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
+                >
+                  <button
+                    onClick={() => completeToDo(item.id, item.isCompleted)}
+                    className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center transition-colors"
+                    style={{
+                      border: "1.5px solid var(--color-border)",
+                      backgroundColor: "transparent",
+                      cursor: "pointer",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "var(--color-accent)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "var(--color-border)")
+                    }
+                    aria-label="Erledigt markieren"
+                  />
+                  <span
+                    className="flex-1 text-sm leading-relaxed"
+                    style={{ color: "var(--color-primary)" }}
+                  >
+                    {item.toDoName}
+                  </span>
+                  <button
+                    onClick={() => deleteToDo(item.id)}
+                    className="text-xs opacity-30 hover:opacity-70 transition-opacity px-1 cursor-pointer"
+                    style={{
+                      color: "var(--color-primary)",
+                      background: "none",
+                      border: "none",
+                    }}
+                    aria-label="Löschen"
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Completed tasks */}
+        {done.length > 0 && (
+          <section>
+            <p
+              className="text-xs font-medium tracking-widest uppercase mb-3"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
+              Erledigt — {done.length}
+            </p>
+            <ul className="space-y-2">
+              {done.map((item) => (
+                <li
+                  key={item.id}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3"
+                >
+                  <button
+                    onClick={() => completeToDo(item.id, item.isCompleted)}
+                    className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center transition-colors cursor-pointer"
+                    style={{
+                      border: "1.5px solid var(--color-accent)",
+                      backgroundColor: "var(--color-accent)",
+                      color: "#fff",
+                      fontSize: "10px",
+                    }}
+                    aria-label="Rückgängig machen"
+                  >
+                    ✓
+                  </button>
+                  <span
+                    className="flex-1 text-sm line-through leading-relaxed"
+                    style={{ color: "var(--color-text-secondary)" }}
+                  >
+                    {item.toDoName}
+                  </span>
+                  <button
+                    onClick={() => deleteToDo(item.id)}
+                    className="text-xs opacity-30 hover:opacity-70 transition-opacity px-1 cursor-pointer"
+                    style={{
+                      color: "var(--color-primary)",
+                      background: "none",
+                      border: "none",
+                    }}
+                    aria-label="Löschen"
+                  >
+                    ✕
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {/* Empty state */}
+        {todos.length === 0 && (
+          <p
+            className="text-sm text-center py-8"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
+            Keine Aufgaben vorhanden.
+          </p>
+        )}
       </div>
+
+      {/* Footer */}
+      <p
+        className="mt-10 text-xs tracking-wide"
+        style={{ color: "var(--color-accent-muted)" }}
+      >
+        {open.length === 0 && todos.length > 0
+          ? "Alles erledigt — gut gemacht."
+          : `${open.length} ${open.length === 1 ? "Aufgabe" : "Aufgaben"} verbleibend`}
+      </p>
     </div>
   );
 }
