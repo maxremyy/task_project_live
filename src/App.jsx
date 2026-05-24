@@ -16,7 +16,9 @@ function App() {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
     });
 
@@ -38,7 +40,9 @@ function App() {
   const addTodo = async () => {
     const { data, error } = await supabase
       .from("Tasks")
-      .insert([{ toDoName: newTodo, isCompleted: false, user_id: session.user.id }])
+      .insert([
+        { toDoName: newTodo, isCompleted: false, user_id: session.user.id },
+      ])
       .select()
       .single();
     if (error) console.error("Error adding todo:", error);
@@ -55,7 +59,12 @@ function App() {
       .update({ isCompleted: !isCompleted })
       .eq("id", id);
     if (error) console.error("Error updating todo:", error);
-    else setTodos(todos.map((t) => (t.id === id ? { ...t, isCompleted: !isCompleted } : t)));
+    else
+      setTodos(
+        todos.map((t) =>
+          t.id === id ? { ...t, isCompleted: !isCompleted } : t,
+        ),
+      );
   };
 
   // DELETE
@@ -127,10 +136,22 @@ function App() {
           }}
         >
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/>
-            <path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/>
-            <path d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/>
-            <path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/>
+            <path
+              d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"
+              fill="#4285F4"
+            />
+            <path
+              d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"
+              fill="#34A853"
+            />
+            <path
+              d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z"
+              fill="#FBBC05"
+            />
+            <path
+              d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"
+              fill="#EA4335"
+            />
           </svg>
           Mit Google anmelden
         </button>
@@ -156,7 +177,10 @@ function App() {
             Aufgaben
           </p>
           <div className="flex items-center gap-3">
-            <span className="text-xs" style={{ color: "var(--color-text-secondary)" }}>
+            <span
+              className="text-xs"
+              style={{ color: "var(--color-text-secondary)" }}
+            >
               {userName}
             </span>
             <button
@@ -189,7 +213,7 @@ function App() {
         }}
       >
         {/* Input */}
-        <div className="flex gap-3 mb-8">
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-3 mb-8">
           <input
             type="text"
             placeholder="Neue Aufgabe …"
@@ -203,7 +227,9 @@ function App() {
               color: "var(--color-primary)",
               fontFamily: "Inter, sans-serif",
             }}
-            onFocus={(e) => (e.target.style.borderColor = "var(--color-accent)")}
+            onFocus={(e) =>
+              (e.target.style.borderColor = "var(--color-accent)")
+            }
             onBlur={(e) => (e.target.style.borderColor = "var(--color-border)")}
           />
           <button
@@ -234,8 +260,12 @@ function App() {
                   key={item.id}
                   className="flex items-center gap-3 rounded-xl px-4 py-3 transition-colors"
                   style={{ border: "1px solid var(--color-border)" }}
-                  onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg)")}
-                  onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.backgroundColor = "var(--color-bg)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.backgroundColor = "transparent")
+                  }
                 >
                   <button
                     onClick={() => completeToDo(item.id, item.isCompleted)}
@@ -245,17 +275,30 @@ function App() {
                       backgroundColor: "transparent",
                       cursor: "pointer",
                     }}
-                    onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--color-accent)")}
-                    onMouseLeave={(e) => (e.currentTarget.style.borderColor = "var(--color-border)")}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "var(--color-accent)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor =
+                        "var(--color-border)")
+                    }
                     aria-label="Erledigt markieren"
                   />
-                  <span className="flex-1 text-sm leading-relaxed" style={{ color: "var(--color-primary)" }}>
+                  <span
+                    className="flex-1 text-sm leading-relaxed"
+                    style={{ color: "var(--color-primary)" }}
+                  >
                     {item.toDoName}
                   </span>
                   <button
                     onClick={() => deleteToDo(item.id)}
                     className="text-xs opacity-30 hover:opacity-70 transition-opacity px-1 cursor-pointer"
-                    style={{ color: "var(--color-primary)", background: "none", border: "none" }}
+                    style={{
+                      color: "var(--color-primary)",
+                      background: "none",
+                      border: "none",
+                    }}
                     aria-label="Löschen"
                   >
                     ✕
@@ -277,7 +320,10 @@ function App() {
             </p>
             <ul className="space-y-2">
               {done.map((item) => (
-                <li key={item.id} className="flex items-center gap-3 rounded-xl px-4 py-3">
+                <li
+                  key={item.id}
+                  className="flex items-center gap-3 rounded-xl px-4 py-3"
+                >
                   <button
                     onClick={() => completeToDo(item.id, item.isCompleted)}
                     className="w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center cursor-pointer"
@@ -291,13 +337,20 @@ function App() {
                   >
                     ✓
                   </button>
-                  <span className="flex-1 text-sm line-through leading-relaxed" style={{ color: "var(--color-text-secondary)" }}>
+                  <span
+                    className="flex-1 text-sm line-through leading-relaxed"
+                    style={{ color: "var(--color-text-secondary)" }}
+                  >
                     {item.toDoName}
                   </span>
                   <button
                     onClick={() => deleteToDo(item.id)}
                     className="text-xs opacity-30 hover:opacity-70 transition-opacity px-1 cursor-pointer"
-                    style={{ color: "var(--color-primary)", background: "none", border: "none" }}
+                    style={{
+                      color: "var(--color-primary)",
+                      background: "none",
+                      border: "none",
+                    }}
                     aria-label="Löschen"
                   >
                     ✕
@@ -310,14 +363,20 @@ function App() {
 
         {/* Empty state */}
         {todos.length === 0 && (
-          <p className="text-sm text-center py-8" style={{ color: "var(--color-text-secondary)" }}>
+          <p
+            className="text-sm text-center py-8"
+            style={{ color: "var(--color-text-secondary)" }}
+          >
             Keine Aufgaben vorhanden.
           </p>
         )}
       </div>
 
       {/* Footer */}
-      <p className="mt-10 text-xs tracking-wide" style={{ color: "var(--color-accent-muted)" }}>
+      <p
+        className="mt-10 text-xs tracking-wide"
+        style={{ color: "var(--color-accent-muted)" }}
+      >
         {open.length === 0 && todos.length > 0
           ? "Alles erledigt — gut gemacht."
           : `${open.length} ${open.length === 1 ? "Aufgabe" : "Aufgaben"} verbleibend`}
